@@ -1,5 +1,9 @@
 import mysql.connector as connector
 import datetime
+import json
+import requests
+from flask import render_template
+import jinja2
 
 # Connect to DB
 
@@ -137,3 +141,22 @@ def display_student_schedule(student_id):
 
   cursor.close()
   db.close()
+
+
+app = flask.Flask(__name__)
+@app.route("/template.html")
+
+def home():
+	res = requests.get("http://staging.bldt.ca/api/method/build_it.user_api.home.get_home")
+	data = res.text
+	data = json.loads(data)
+
+	context = {}
+	context['title'] = "gsg"
+	context['main_categories'] = data['data']['main_categories']
+	data_product = json.loads(values_of_product)
+	context['featured_items'] = data_product['data']['featured_items']
+	return render_template("template.html",**context)
+
+
+app.run(debug=True)
